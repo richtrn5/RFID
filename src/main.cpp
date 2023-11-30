@@ -10,7 +10,7 @@ using std::string;
 // create instances of TFT class and MFRC522 class
 TFT_eSPI tft = TFT_eSPI();
 MFRC522 mfrc522(SS, RST);
-
+RfidUB cardReader_(mfrc522, tft);
 
 //derived from Print class or Print.h
 
@@ -22,11 +22,11 @@ MFRC522 mfrc522(SS, RST);
 void setup() {
   Serial.begin(115200);
 
-  tft_Setup(tft);
+  cardReader_.tft_Setup();
 
   delay(1000);
 
-  rfid_Setup(mfrc522);
+  cardReader_.rfid_Setup();
 
 	Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
 
@@ -43,7 +43,7 @@ void loop() {
         // tft.println( "access denied" )
 
 
-  displayUID(mfrc522, tft);
+  cardReader_.displayUID();
 
 
 

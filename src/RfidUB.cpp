@@ -3,15 +3,16 @@
 // for pinout diagram
 //https://f6czv.fr/en/documentation-on-esp32-and-the-ttgo-t-display
 
-
-
-//mfrc522 object instance
-int getUID()
+RfidUB::RfidUB(MFRC522& tempMFRC,TFT_eSPI & temptft): mfrc522(tempMFRC), tft(temptft)
 {
-
 }
 
-void rfid_Setup(MFRC522 & mfrc522)
+RfidUB::~RfidUB()
+{
+}
+
+//mfrc522 object instance
+void RfidUB::rfid_Setup()
 {
     SPI.begin(SCK,MY_MISO_PIN,MY_MOSI_PIN); //RUN another SPI comm. line under those pins, assuming they're not being used
 
@@ -28,7 +29,7 @@ void rfid_Setup(MFRC522 & mfrc522)
 	mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
 }
 
-void displayUID(MFRC522 & mfrc522, TFT_eSPI & tft)
+void RfidUB::displayUID()
 {
     if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
     // Clear the line
@@ -47,3 +48,31 @@ void displayUID(MFRC522 & mfrc522, TFT_eSPI & tft)
     delay(1000);  // Add a delay if needed
   }
 }
+
+void RfidUB::tft_Setup()
+{
+    const char stuff[15] = "UB RFID SYSTEM";
+
+    //initialize display default parameters
+    tft.init();
+    
+  //set screen to landscape
+    tft.setRotation(1);
+    tft.fillScreen(TFT_GREY);
+    tft.setCursor(0,0,2); // sets cursor for tft.print, 3rd parameter is font type
+    tft.setTextColor(TFT_WHITE,TFT_BLACK);  
+    tft.setTextSize(1);
+    tft.println(stuff);
+
+}
+/*
+initiate wifi
+
+
+
+Check card..
+Write card to eeprom
+
+i guess the next step would be to interact the microcontroller 
+with the website webserver to associate the UID with Student ID...
+*/

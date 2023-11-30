@@ -6,7 +6,9 @@
 #include <Print.h>
 #include <Arduino.h>
 #include <SPI.h>
-#include "TFT_Start.h"
+#include "TFT_eSPI.h"
+
+#define TFT_GREY 0x5AEB
 
 // define SPI parameters
 #define MY_MISO_PIN 27  // Define your custom MISO (Master In - Slave Out) pin
@@ -19,10 +21,23 @@
 
 // This should return a value for whether a card is being read or not
 // Returns a value if card is not new or is not reading the card.
-int getUID();
+class RfidUB
+{
+private:
+    MFRC522 mfrc522;
+    TFT_eSPI tft;
+public:
+    RfidUB(MFRC522& tempMFRC, TFT_eSPI & tft);
+    void rfid_Setup();
+    void displayUID();
+    void tft_Setup();
+    ~RfidUB();
+};
 
-void rfid_Setup(MFRC522 & mfrc522);
 
-void displayUID(MFRC522 & mfrc522, TFT_eSPI & tft);
+
+
+
+
 
 
