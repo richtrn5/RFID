@@ -1,7 +1,5 @@
 #include "RfidUB.h"
 
-// for pinout diagram
-//https://f6czv.fr/en/documentation-on-esp32-and-the-ttgo-t-display
 
 RfidUB::RfidUB(MFRC522& tempMFRC,TFT_eSPI & temptft): mfrc522(tempMFRC), tft(temptft)
 {
@@ -14,24 +12,23 @@ RfidUB::~RfidUB()
 //mfrc522 object instance
 void RfidUB::rfid_Setup()
 {
-    SPI.begin(SCK,MY_MISO_PIN,MY_MOSI_PIN); //RUN another SPI comm. line under those pins, assuming they're not being used
+  SPI.begin(SCK,MY_MISO_PIN,MY_MOSI_PIN); //RUN another SPI comm. line under those pins, assuming they're not being used
 
-    pinMode(RST, OUTPUT);
-    digitalWrite(RST, HIGH);
+  pinMode(RST, OUTPUT);
+  digitalWrite(RST, HIGH);
 
-    mfrc522.PCD_Init();
-    // for motor's relay
-    delay(1000);
+  mfrc522.PCD_Init();
+  // for motor's relay
+  delay(1000);
 
 
 
- // delay(4);				// Optional delay. Some board do need more time after init to be ready, see Readme
 	mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
 }
 
 void RfidUB::displayUID()
 {
-    if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
     // Clear the line
     //tft.fillRect(0, 0, tft.width(), tft.fontHeight(), TFT_BLACK);
 
@@ -56,7 +53,7 @@ void RfidUB::tft_Setup()
     //initialize display default parameters
     tft.init();
     
-  //set screen to landscape
+    //set screen to landscape
     tft.setRotation(1);
     tft.fillScreen(TFT_GREY);
     tft.setCursor(0,0,2); // sets cursor for tft.print, 3rd parameter is font type
@@ -65,8 +62,9 @@ void RfidUB::tft_Setup()
     tft.println(stuff);
 
 }
+
+
 /*
-initiate wifi
 
 
 
@@ -76,3 +74,4 @@ Write card to eeprom
 i guess the next step would be to interact the microcontroller 
 with the website webserver to associate the UID with Student ID...
 */
+
