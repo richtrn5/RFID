@@ -1,19 +1,18 @@
 class People
 {
 private:
-    char* UID[15];
-    char* ID[10];
-    char* fname[15];
-    char* lname[15];
+    char* ID;
+    char* fname;
+    char* lname;
 public:
 
     People();
-    void storeUID(char* tempUID[15])
-
+    void storeUID(char* tempUID);
+    
     ~People();
 };
 
-People::People(): UID(""), ID(""), fname(""), lname("")
+People::People(): ID(" "), fname("  "), lname("  ")
 {
 
 }

@@ -1,54 +1,29 @@
 #include "RfidUB.h"
-#include <string>
-#include "Button.h"
-
-using std::string;
 
 #define CW 15
 #define CCW 13
 
  
-// create instances of TFT class and MFRC522 class
-TFT_eSPI tft = TFT_eSPI();
-MFRC522 mfrc522(SS, RST);
-RfidUB cardReader_(mfrc522, tft);
-Button buttons_;
-//volatile bool buttonPressed = false;
-//derived from Print class or Print.h
-
-//initialize rc522 class pointer as a VSPI
-//SPIClass rc522(VSPI);
-
-
+// create instances of TFT class and MFRC522 class and button class
+RfidUB cardReader_;
 
 void setup() {
   Serial.begin(115200);
 
-  buttons_.begin();
-  cardReader_.wifi_Setup();
-
   cardReader_.tft_Setup();
-
-  delay(1000);
 
   cardReader_.rfid_Setup();
 
   Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
 
+  //cardReader_.wifi_Setup();
 
 }
 
 void loop() {
 
-  // PSEUDO CODE for simple display function
-  // IF card detected
-    // IF person is in database
-        // tft.println( print person's name )
-    // ELSE
-        // tft.println( "access denied" )
   cardReader_.displayUID();
-
-  buttons_.loop();
+  cardReader_.checkUID();
 
 
 

@@ -1,6 +1,6 @@
 #include "Button.h"
 
-bool sleepButtonPressed = false;
+volatile bool sleepButtonPressed = false;
 
 void Button::handleSleepButtonInterrupt() { 
     sleepButtonPressed = true;
