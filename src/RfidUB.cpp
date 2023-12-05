@@ -21,6 +21,13 @@ void RfidUB::rfid_Setup()
 	mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
 }
 
+void RfidUB::add_people(String name, String uid)
+{
+  people[index] = new Person(name, uid);
+  index++;
+  
+}
+
 
 void RfidUB::displayUID()
 {
@@ -38,6 +45,7 @@ void RfidUB::displayUID()
 
     // checks and displays UID in HEX format
     for (byte i = 0; i < mfrc522.uid.size; i++) {
+        //tag += mfrc522.uid.uidByte[i];
         tft.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
         tft.print(mfrc522.uid.uidByte[i], HEX);
     }
@@ -73,34 +81,77 @@ void RfidUB::wifi_Setup()
 
 void RfidUB::checkUID()
 {
+  buttons_.loop();
+
+  String tag = "";
+  tft.setCursor(0, 20); // (x,y, font)
+  tft.setTextColor(TFT_WHITE, TFT_BLACK); // Set text color
+  tft.print("UID Tag: ");
+
   if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    if (!isUIDStored()) {
-      Serial.println("New UID detected. Storing in EEPROM.");
-      storeUID();
+    // Print UID
+    Serial.print("UID Tag :");
+    String content= "";
+    for (byte i = 0; i < mfrc522.uid.size; i++) {
+      //content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+      content.concat(String(mfrc522.uid.uidByte[i], HEX));
+      tft.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+      tft.print(mfrc522.uid.uidByte[i], HEX);
+    }
+    content.toUpperCase();
+    Serial.println(content);
+
+    // Check for access for loop of each person
+    // MOVE THE MOTOR HERE
+    tft.setCursor(0, 40); // (x,y, font)
+
+    if (check_People(content))
+    {
+      // add motor control here for unlock
+    }
+    else
+    {
+      Serial.println("Access Denied");
+      tft.print("Access Denied");
+      clearLineAtY(60);
+      //tft.print("  ");
+      // add motor control here for lock
+    }
+    
+    
+    delay(1000);  // Delay to avoid reading the same card multiple times
+  }
+}
+
+  
+  //if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+
+bool RfidUB::check_People(String content)
+{
+  for (size_t i = 0; i < index; i++)
+  {
+    if (content.equals(people[i]->getUID())) {  // Replace "YOUR_ACCESS_UID" with the actual UID of the authorized card
+      Serial.println("Access Granted");
+      tft.print("Access Granted");
+      tft.setCursor(0, 60); // (x,y, font)
+      clearLineAtY(60);
+      tft.print(people[i] -> getName());
+      return true; // breaks for loop when detected
     } else {
-      Serial.println("UID already stored.");
-    }
-    delay(1000);
-  }
-}
-
-bool RfidUB::isUIDStored()
-{
-  for (int i = 0; i < MAX_UID_LENGTH; i++) {
-    if (EEPROM.read(i) != mfrc522.uid.uidByte[i]) {
-      return false; // UID doesn't match at this address
+      //Serial.println("Access Denied");
+      //return false;
     }
   }
-  return true; // UID matches at all addresses
+  return false; //default return
 }
 
 
-void RfidUB::storeUID()
-{
-  for (int i = 0; i < MAX_UID_LENGTH; i++) {
-    EEPROM.write(i, mfrc522.uid.uidByte[i]);
-  }
-  EEPROM.commit();
+void RfidUB::clearLineAtY(int y) {
+  // Draw a filled rectangle to clear the entire line at y position
+  int16_t screenWidth = tft.width();
+  int16_t lineHeight = tft.fontHeight();  // Adjust if using different font size
+
+  tft.fillRect(0, y, screenWidth, lineHeight, TFT_GREY);
 }
 
 

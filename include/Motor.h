@@ -3,16 +3,11 @@ class Motor
 private:
 
 public:
-    Motor();
-    
-    ~Motor();
+    Motor(){}
+    ~Motor(){}
+    void turnCCW();
+    void turnCW();
 };
 
-Motor::Motor(/* args */)
-{
-}
 
-Motor::~Motor()
-{
-}
         

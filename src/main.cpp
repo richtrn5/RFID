@@ -16,13 +16,16 @@ void setup() {
 
   Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
 
+  cardReader_.add_people("John", "DABD6B80"); // add person to Dynamic Array
+  cardReader_.add_people("Brandon", "7A69E880");
+
   //cardReader_.wifi_Setup();
 
 }
 
 void loop() {
 
-  cardReader_.displayUID();
+  //cardReader_.displayUID();
   cardReader_.checkUID();
 
 

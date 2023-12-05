@@ -8,6 +8,7 @@
 #include "Button.h"
 #include <vector>
 #include "Person.h"
+#include "Motor.h"
 
 #define MAX_UID_LENGTH 10
 
@@ -25,7 +26,6 @@
 #define SS 33           // Default SS (Slave Select) pin for SPI .. IT IS ALSO THE SDA
 #define RST 17
 
-using std::vector;
 
 //declaring RFID function prototypes
 
@@ -35,28 +35,33 @@ using std::vector;
 class RfidUB
 {
 private:
+    // multiple containments defined
+    Motor motor;
     MFRC522 mfrc522;
     Button buttons_;
     TFT_eSPI tft = TFT_eSPI();
     // manager saves last successful wifi credentials in EEPROM
     WiFiManager wifiManager;
-    //create a vector of person to store each person object with their name, uid, etc.
-    vector<Person> people; 
-public:
-    RfidUB(): mfrc522(SS, RST) {} //inline just to initiate object
-    void rfid_Setup();
+    // create dynamic array of Person
+    Person ** people;
+    const int num_people = 10;
+    int index = 0;
 
+public:
+    RfidUB(): mfrc522(SS, RST) { people = new Person*[num_people]; } //inline just to initiate object
+    void rfid_Setup();
+    void add_people(String name, String uid);
+    bool check_People(String content);
     void displayUID();
     void tft_Setup();
     void wifi_Setup();
 
     //TODO implement these
+    void clearLineAtY(int y);
 
     // checks to see if UID already exists 
     void checkUID();
 
-    bool isUIDStored();
-    void storeUID();
 
     ~RfidUB();
 };
