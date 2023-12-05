@@ -29,6 +29,7 @@ void loop() {
 
 }
 
+// will use later in the MOTOR class
 
 // program for running dc motor in all directions
   /*
