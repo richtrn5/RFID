@@ -26,9 +26,14 @@
 #define SS 33           // Default SS (Slave Select) pin for SPI .. IT IS ALSO THE SDA
 #define RST 17
 
+// for relay input pins
+#define CW 15
+#define CCW 13
+
+// Active Buzzer
+#define BUZZER_PIN 14
 
 //declaring RFID function prototypes
-
 
 // This should return a value for whether a card is being read or not
 // Returns a value if card is not new or is not reading the card.
@@ -48,11 +53,10 @@ private:
     int index = 0;
 
 public:
-    RfidUB(): mfrc522(SS, RST) { people = new Person*[num_people]; } //inline just to initiate object
+    RfidUB(): motor(CW,CCW), mfrc522(SS, RST) { people = new Person*[num_people]; } //inline just to initiate object
     void rfid_Setup();
     void add_people(String name, String uid);
     bool check_People(String content);
-    void displayUID();
     void tft_Setup();
     void wifi_Setup();
 

@@ -1,14 +1,16 @@
 #include "RfidUB.h"
 
-#define CW 15
-#define CCW 13
 
- 
+
+
 // create instances of TFT class and MFRC522 class and button class
 RfidUB cardReader_;
 
 void setup() {
   Serial.begin(115200);
+  pinMode(CW, OUTPUT);
+  pinMode(CCW, OUTPUT);
+  //pinMode(BUZZER_PIN, OUTPUT);
 
   cardReader_.tft_Setup();
 
@@ -19,7 +21,7 @@ void setup() {
   cardReader_.add_people("John", "DABD6B80"); // add person to Dynamic Array
   cardReader_.add_people("Brandon", "7A69E880");
 
-  //cardReader_.wifi_Setup();
+  cardReader_.wifi_Setup();
 
 }
 
@@ -36,17 +38,7 @@ void loop() {
 
 // program for running dc motor in all directions
   /*
-  digitalWrite(CW,HIGH); //Motor runs clockwise//
 
-  delay(2500); //for 1 second//
-
-  digitalWrite(CW, LOW); //Motor stops//
-
-  digitalWrite(CCW, HIGH);//Motor runs counter-clockwise//
-
-  delay(2500); //For 1 second//
-
-  digitalWrite(CCW, LOW); //Motor stops//
   */
 
  // TODO: Make active buzzer beep when distance sensor detects the box is opened

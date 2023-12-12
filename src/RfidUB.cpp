@@ -1,6 +1,5 @@
 #include "RfidUB.h"
 
-
 RfidUB::~RfidUB()
 {
 }
@@ -9,7 +8,7 @@ RfidUB::~RfidUB()
 //mfrc522 object instance
 void RfidUB::rfid_Setup()
 {
-  buttons_.begin();
+  //buttons_.begin();  // <<UNDER DEVELOPMENT>>
   SPI.begin(SCK,MY_MISO_PIN,MY_MOSI_PIN); //RUN another SPI comm. line under those pins, assuming they're not being used
 
   pinMode(RST, OUTPUT);
@@ -29,30 +28,7 @@ void RfidUB::add_people(String name, String uid)
 }
 
 
-void RfidUB::displayUID()
-{
-  // using buttons for sleep mode...
-  buttons_.loop();
 
-  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    // Clear the line
-    //tft.fillRect(0, 0, tft.width(), tft.fontHeight(), TFT_BLACK);
-
-    // Show UID on TFT display
-    tft.setCursor(0, 20); // (x,y, font)
-    tft.setTextColor(TFT_WHITE, TFT_BLACK); // Set text color
-    tft.print("UID Tag: ");
-
-    // checks and displays UID in HEX format
-    for (byte i = 0; i < mfrc522.uid.size; i++) {
-        //tag += mfrc522.uid.uidByte[i];
-        tft.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-        tft.print(mfrc522.uid.uidByte[i], HEX);
-    }
-
-    delay(1000);  // Add a delay if needed
-  }
-}
 
 void RfidUB::tft_Setup()
 {
@@ -81,7 +57,7 @@ void RfidUB::wifi_Setup()
 
 void RfidUB::checkUID()
 {
-  buttons_.loop();
+  //buttons_.loop();
 
   String tag = "";
   tft.setCursor(0, 20); // (x,y, font)
@@ -101,20 +77,28 @@ void RfidUB::checkUID()
     content.toUpperCase();
     Serial.println(content);
 
-    // Check for access for loop of each person
-    // MOVE THE MOTOR HERE
-    tft.setCursor(0, 40); // (x,y, font)
 
+    // Check for access for loop of each person
+    tft.setCursor(0, 40); // (x,y, font)
     if (check_People(content))
     {
       // add motor control here for unlock
+      motor.turnCCW();
+      // add buzzer control here
+      //digitalWrite(BUZZER_PIN, HIGH);
     }
     else
     {
+      clearLineAtY(40);
+      clearLineAtY(60);
       Serial.println("Access Denied");
       tft.print("Access Denied");
+      // clears screen at specific position
       clearLineAtY(60);
-      //tft.print("  ");
+      delay(100);
+
+      motor.turnCW();
+
       // add motor control here for lock
     }
     
@@ -131,15 +115,19 @@ bool RfidUB::check_People(String content)
   for (size_t i = 0; i < index; i++)
   {
     if (content.equals(people[i]->getUID())) {  // Replace "YOUR_ACCESS_UID" with the actual UID of the authorized card
+      clearLineAtY(40);
+      clearLineAtY(60);
       Serial.println("Access Granted");
       tft.print("Access Granted");
       tft.setCursor(0, 60); // (x,y, font)
       clearLineAtY(60);
       tft.print(people[i] -> getName());
+      delay(100);
       return true; // breaks for loop when detected
     } else {
       //Serial.println("Access Denied");
       //return false;
+      delay(100);
     }
   }
   return false; //default return
